@@ -14,3 +14,8 @@ Particle::Particle(float x, float y, float mass) {
 Particle::~Particle() {
 	std::cout << "Particle destructor called" << std::endl;
 }
+
+void Particle::Integrate(float timeDelta) {
+	velocity += acceleration * timeDelta;
+	position += velocity * timeDelta;
+}

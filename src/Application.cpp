@@ -50,8 +50,7 @@ void Application::Update() {
 	timePreviousFrame = SDL_GetTicks();
 
 	particle->acceleration = Vec2(0 * PIXELS_PER_METER, 9.8 * PIXELS_PER_METER);
-	particle->velocity += particle->acceleration * timeDelta;
-	particle->position += particle->velocity  * timeDelta;
+	particle->Integrate(timeDelta);
 
 	if (particle -> position.x - particle->radius <= 0) {
 		particle->position.x = particle->radius;
