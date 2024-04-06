@@ -15,7 +15,17 @@ Particle::~Particle() {
 	std::cout << "Particle destructor called" << std::endl;
 }
 
+void Particle::AddForce(const Vec2 &force) {
+	sumForces += force;
+}
+
+void Particle::ClearForces() {
+	sumForces = Vec2(0, 0);
+}
+
 void Particle::Integrate(float timeDelta) {
+	acceleration = sumForces / mass; // f = ma -> a = f/m
 	velocity += acceleration * timeDelta;
 	position += velocity * timeDelta;
+	ClearForces();
 }

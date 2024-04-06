@@ -34,9 +34,6 @@ void Application::Input() {
 
 void Application::Update() {
 	static int timePreviousFrame;
-	int winHeight = Graphics::Height();
-
-	// todo: check if we are too fast, and waste time to match the milliseconds per fram
 	int waitTime = MILLISECONDS_PER_FRAME - (SDL_GetTicks() - timePreviousFrame);
 	if (waitTime > 0) {
 		SDL_Delay(waitTime);
@@ -49,22 +46,23 @@ void Application::Update() {
 
 	timePreviousFrame = SDL_GetTicks();
 
-	particle->acceleration = Vec2(0 * PIXELS_PER_METER, 9.8 * PIXELS_PER_METER);
+	Vec2 wind = Vec2(0.2 * PIXELS_PER_METER, 0 * PIXELS_PER_METER);
+	particle->AddForce(wind);
 	particle->Integrate(timeDelta);
 
 	if (particle -> position.x - particle->radius <= 0) {
 		particle->position.x = particle->radius;
-		particle->velocity.x *= -0.8;
+		particle->velocity.x *= -0.9;
 	} else if (particle -> position.x + particle->radius >= Graphics::Width()) {
 		particle->position.x = Graphics::Width() - particle->radius;
-		particle->velocity.x *= -0.8;
+		particle->velocity.x *= -0.9;
 	}
 	if (particle -> position.y - particle->radius <= 0) {
 		particle->position.y = particle->radius;
-		particle->velocity.y *= -0.8;
+		particle->velocity.y *= -0.9;
 	} else if (particle -> position.y + particle->radius >= Graphics::Height()) {
 		particle->position.y = Graphics::Height() - particle->radius;
-		particle->velocity.y *= -0.8;
+		particle->velocity.y *= -0.9;
 	}
 }
 
