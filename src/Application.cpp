@@ -3,7 +3,8 @@
 //
 
 #include "Application.h"
-#include "Constants.h"
+#include "Physics/Constants.h"
+#include "Physics/Force.h"
 
 bool Application::IsRunning() {
 	return running;
@@ -18,6 +19,11 @@ void Application::Setup() {
 	auto *bigBall = new Particle(600, 100, 3.0);
 	bigBall->radius = 50;
 	particles.push_back(bigBall);
+
+	liquid.x = 0;
+	liquid.y = Graphics::Height() / 2;
+	liquid.w = Graphics::Width();
+	liquid.h = Graphics::Height() / 2;
 }
 
 void Application::Input() {
@@ -75,8 +81,16 @@ void Application::Update() {
 		Vec2 weight = Vec2(0 * PIXELS_PER_METER, particle->mass * GRAVITY_MAGNITUDE * PIXELS_PER_METER);
 		particle->AddForce(weight);
 		particle->AddForce(pushForce);
+
+		// apply a drag force if ball is inside the liquid
+		if (particle->position.y >= liquid.y) {
+			auto dragForce = Force::GenerateDragForce(*particle, 0.1);
+			particle->AddForce(dragForce);
+		}
+
 		particle->Integrate(timeDelta);
 
+		// flip velocity vectors if window boundary is hit
 		if (particle->position.x - particle->radius <= 0) {
 			particle->position.x = particle->radius;
 			particle->velocity.x *= -BOUNCE_REVERSAL_RATIO;
@@ -96,6 +110,7 @@ void Application::Update() {
 
 void Application::Render() {
 	Graphics::ClearScreen(0xFF056263);
+	Graphics::DrawFillRect(liquid.x + liquid.w / 2, liquid.y + liquid.h / 2, liquid.w, liquid.h, 0xFF6E3713);
 	for (auto particle: particles) {
 		Graphics::DrawFillCircle(particle->position.x, particle->position.y, particle->radius, 0xFFFFFFFF);
 	}

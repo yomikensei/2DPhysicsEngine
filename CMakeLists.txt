@@ -31,7 +31,9 @@ set(SOURCE_FILES src/main.cpp
         src/SDL2_gfx/SDL2_gfxPrimitives_font.h
         src/SDL2_gfx/SDL2_rotozoom.c
         src/SDL2_gfx/SDL2_rotozoom.h
-        src/Constants.h
+        src/Physics/Constants.h
+        src/Physics/Force.cpp
+        src/Physics/Force.h
 )
 
 
