@@ -8,5 +8,7 @@
 const int FPS = 60;
 const int MILLISECONDS_PER_FRAME = 1000 / FPS;
 const int PIXELS_PER_METER = 50;
+const float GRAVITY_MAGNITUDE = 9.8;
+const float BOUNCE_REVERSAL_RATIO = 0.9;
 
 #endif //INC_2DPHYSICSENGINE_CONSTANTS_H

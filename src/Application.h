@@ -11,8 +11,8 @@
 class Application {
 	private:
 		bool running = false;
-		Particle* particle;
-		int timePreviousFrame;
+		std::vector<Particle*> particles;
+		Vec2 pushForce = Vec2(0,0);
 
 	public:
 		Application() = default;

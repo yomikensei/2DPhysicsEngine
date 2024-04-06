@@ -8,6 +8,11 @@
 Particle::Particle(float x, float y, float mass) {
 	this->position = Vec2(x, y);
 	this->mass = mass;
+	if (mass != 0) {
+		this->invMass = 1 / mass;
+	} else {
+		this->invMass = 0;
+	}
 	std::cout << "Particle constructor called" << std::endl;
 }
 
@@ -24,7 +29,7 @@ void Particle::ClearForces() {
 }
 
 void Particle::Integrate(float timeDelta) {
-	acceleration = sumForces / mass; // f = ma -> a = f/m
+	acceleration = sumForces * invMass; // f = ma -> a = f/m
 	velocity += acceleration * timeDelta;
 	position += velocity * timeDelta;
 	ClearForces();
