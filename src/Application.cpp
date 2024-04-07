@@ -16,10 +16,6 @@ void Application::Setup() {
 	smallBall->radius = 25;
 	particles.push_back(smallBall);
 
-	auto *bigBall = new Particle(600, 100, 3.0);
-	bigBall->radius = 50;
-	particles.push_back(bigBall);
-
 	liquid.x = 0;
 	liquid.y = Graphics::Height() / 2;
 	liquid.w = Graphics::Width();
@@ -82,9 +78,12 @@ void Application::Update() {
 
 	timePreviousFrame = SDL_GetTicks();
 	for (auto particle: particles) {
-		Vec2 weight = Vec2(0 * PIXELS_PER_METER, particle->mass * GRAVITY_MAGNITUDE * PIXELS_PER_METER);
-		particle->AddForce(weight);
+//		Vec2 weight = Vec2(0 * PIXELS_PER_METER, particle->mass * GRAVITY_MAGNITUDE * PIXELS_PER_METER);
+//		particle->AddForce(weight);
+		Vec2 frictionForce = Force::GenerateFrictionForce(*particle, 10.0 * PIXELS_PER_METER);
+
 		particle->AddForce(pushForce);
+		particle->AddForce(frictionForce);
 
 		// apply a drag force if ball is inside the liquid
 		if (particle->position.y >= liquid.y) {
