@@ -55,6 +55,15 @@ void Application::Input() {
 				if (event.key.keysym.sym == SDLK_LEFT)
 					pushForce.x = 0;
 				break;
+			case SDL_MOUSEBUTTONDOWN:
+				if (event.button.button == SDL_BUTTON_LEFT) {
+					int x, y;
+					SDL_GetMouseState(&x, &y);
+					auto *particle = new Particle(x, y, 1.0);
+					particle->radius = 5;
+					this->particles.push_back(particle);
+				}
+				break;
 		}
 	}
 }
@@ -72,12 +81,7 @@ void Application::Update() {
 	}
 
 	timePreviousFrame = SDL_GetTicks();
-
-	Vec2 wind = Vec2(0.2 * PIXELS_PER_METER, 0 * PIXELS_PER_METER);
-
 	for (auto particle: particles) {
-		particle->AddForce(wind);
-
 		Vec2 weight = Vec2(0 * PIXELS_PER_METER, particle->mass * GRAVITY_MAGNITUDE * PIXELS_PER_METER);
 		particle->AddForce(weight);
 		particle->AddForce(pushForce);
