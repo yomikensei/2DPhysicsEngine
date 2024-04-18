@@ -13,13 +13,17 @@ bool Application::IsRunning() {
 void Application::Setup() {
 	running = Graphics::OpenWindow();
 	auto *smallBall = new Particle(100, 100, 1.0);
-	smallBall->radius = 25;
+	smallBall->radius = 10;
 	particles.push_back(smallBall);
 
-	liquid.x = 0;
-	liquid.y = Graphics::Height() / 2;
-	liquid.w = Graphics::Width();
-	liquid.h = Graphics::Height() / 2;
+	auto *bigBall = new Particle(500, 500, 20.0);
+	bigBall->radius = 50;
+	particles.push_back(bigBall);
+
+//	liquid.x = 0;
+//	liquid.y = Graphics::Height() / 2;
+//	liquid.w = Graphics::Width();
+//	liquid.h = Graphics::Height() / 2;
 }
 
 void Application::Input() {
@@ -77,6 +81,11 @@ void Application::Update() {
 	}
 
 	timePreviousFrame = SDL_GetTicks();
+	Vec2 attraction = Force::GenerateGravitationalForce(*particles[0], *particles[1], 10000000);
+
+	particles[0]->AddForce(attraction);
+	particles[1]->AddForce(-attraction);
+
 	for (auto particle: particles) {
 //		Vec2 weight = Vec2(0 * PIXELS_PER_METER, particle->mass * GRAVITY_MAGNITUDE * PIXELS_PER_METER);
 //		particle->AddForce(weight);
