@@ -36,3 +36,11 @@ Vec2 Force::GenerateSpringForce(const Particle &particle, Vec2 anchor, float res
 	Vec2 springForce = springDirection * springMagnitude;
 	return springForce;
 }
+
+Vec2 Force::GenerateSpringForce(const Particle &particleA, const Particle &particleB, float restLength, float k) {
+	Vec2 d = particleA.position - particleB.position;
+	float displacement = d.Magnitude() - restLength;
+	Vec2 springDirection = d.UnitVector();
+	float springMagnitude = -k * displacement;
+	Vec2 springForce = springDirection * springMagnitude;
+	return springForce;}

@@ -13,9 +13,14 @@ bool Application::IsRunning() {
 void Application::Setup() {
 	running = Graphics::OpenWindow();
 	anchor = Vec2(Graphics::Width() / 2, 100);
-	auto *ball = new Particle(Graphics::Width() / 2.0, Graphics::Height() / 2.0, 2.0);
-	ball->radius = 10;
-	particles.push_back(ball);
+
+	int particleIndex = 0;
+	while (particleIndex < NUM_PARTICLES) {
+		auto *ball = new Particle(anchor.x, anchor.y + (particleIndex * restLength), 2.0);
+		ball->radius = 10;
+		particles.push_back(ball);
+		particleIndex++;
+	}
 }
 
 void Application::Input() {
@@ -63,9 +68,10 @@ void Application::Input() {
 			case SDL_MOUSEBUTTONUP:
 				if (leftMouseButtonDown && event.button.button == SDL_BUTTON_LEFT) {
 					leftMouseButtonDown = false;
-					Vec2 impulseDirection = (particles[0]->position - mouseCursor).UnitVector();
-					float impulseMagnitude = (particles[0]->position - mouseCursor).Magnitude() * 5.0;
-					particles[0]->velocity = impulseDirection * impulseMagnitude;
+					auto lastParticle = particles[NUM_PARTICLES -1];
+					Vec2 impulseDirection = (lastParticle->position - mouseCursor).UnitVector();
+					float impulseMagnitude = (lastParticle->position - mouseCursor).Magnitude() * 10.0;
+					lastParticle->velocity = impulseDirection * impulseMagnitude;
 				}
 				break;
 		}
@@ -86,16 +92,27 @@ void Application::Update() {
 
 	timePreviousFrame = SDL_GetTicks();
 
-	for (auto particle: particles) {
-//		Vec2 weight = Vec2(0 * PIXELS_PER_METER, particle->mass * GRAVITY_MAGNITUDE * PIXELS_PER_METER);
-//		particle->AddForce(weight);
+	int particleIndex = 0;
+	while (particleIndex < NUM_PARTICLES) {
+		auto particle = particles[particleIndex];
+		Vec2 weightForce = Vec2(0 * PIXELS_PER_METER, particle->mass * GRAVITY_MAGNITUDE * PIXELS_PER_METER);
 		Vec2 frictionForce = Force::GenerateFrictionForce(*particle, 10.0 * PIXELS_PER_METER);
+		Vec2 dragForce = Force::GenerateDragForce(*particle, 0.002);
 
 		particle->AddForce(pushForce);
 		particle->AddForce(frictionForce);
+		particle->AddForce(weightForce);
+		particle->AddForce(dragForce);
 
-		Vec2 springForce = Force::GenerateSpringForce(*particles[0], anchor, restLength, k);
-		particle->AddForce(springForce);
+		Vec2 springForce;
+		if (particleIndex == 0) {
+			 springForce = Force::GenerateSpringForce(*particle, anchor, restLength, k);
+			particle->AddForce(springForce);
+		} else {
+			springForce = Force::GenerateSpringForce(*particle, *particles[particleIndex-1], restLength, k);
+			particle->AddForce(springForce);
+			particles[particleIndex-1]->AddForce(-springForce);
+		}
 
 		particle->Integrate(timeDelta);
 
@@ -114,17 +131,30 @@ void Application::Update() {
 			particle->position.y = Graphics::Height() - particle->radius;
 			particle->velocity.y *= -BOUNCE_REVERSAL_RATIO;
 		}
+		particleIndex++;
 	}
 }
 
 void Application::Render() {
 	Graphics::ClearScreen(0xFF056263);
 	if (leftMouseButtonDown) {
-		Graphics::DrawLine(particles[0]->position.x, particles[0]->position.y, mouseCursor.x, mouseCursor.y, 0xFF0000FF);
+		auto lastParticle = particles[NUM_PARTICLES-1];
+		Graphics::DrawLine(lastParticle->position.x, lastParticle->position.y, mouseCursor.x, mouseCursor.y, 0xFF0000FF);
 	}
-	Graphics::DrawLine(anchor.x, anchor.y, particles[0]->position.x, particles[0]->position.y, 0xFF313131);
 	Graphics::DrawFillCircle(anchor.x, anchor.y, 5, 0xFF001155);
-	Graphics::DrawFillCircle(particles[0]->position.x, particles[0]->position.y, particles[0]->radius, 0xFFFFFFFF);
+
+	int particleIndex = 0;
+	while (particleIndex < NUM_PARTICLES) {
+		auto particle = particles[particleIndex];
+		if (particleIndex == 0) {
+			Graphics::DrawLine(anchor.x, anchor.y, particle->position.x, particle->position.y, 0xFF313131);
+		} else {
+			auto prevParticle = particles[particleIndex-1];
+			Graphics::DrawLine(prevParticle->position.x, prevParticle->position.y, particle->position.x, particle->position.y, 0xFF313131);
+		}
+		Graphics::DrawFillCircle(particle->position.x, particle->position.y, particle->radius, 0xFFFFFFFF);
+		particleIndex++;
+	}
 	Graphics::RenderFrame();
 }
 
