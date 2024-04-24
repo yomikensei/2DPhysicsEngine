@@ -17,7 +17,7 @@ void Application::Setup() {
 	int particleIndex = 0;
 	while (particleIndex < NUM_PARTICLES) {
 		auto *ball = new Particle(anchor.x, anchor.y + (particleIndex * restLength), 2.0);
-		ball->radius = 10;
+		ball->radius = 6;
 		particles.push_back(ball);
 		particleIndex++;
 	}
