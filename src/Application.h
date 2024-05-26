@@ -16,10 +16,10 @@ class Application {
 		Vec2 mouseCursor = Vec2(0, 0);
 		bool leftMouseButtonDown = false;
 
-		const int NUM_PARTICLES = 20;
+		const int NUM_PARTICLES = 4;
 		Vec2 anchor;
-		float k = 300;
-		float restLength = 15;
+		float k = 2000;
+		float restLength = 300;
 
 	public:
 		Application() = default;
