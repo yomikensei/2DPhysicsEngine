@@ -6,33 +6,28 @@
 #define INC_2DPHYSICSENGINE_APPLICATION_H
 
 #include "./Graphics.h"
+#include "Physics/Body.h"
 #include "Physics/Particle.h"
 
 class Application {
-	private:
-		bool running = false;
-		std::vector<Particle*> particles;
-		Vec2 pushForce = Vec2(0,0);
-		Vec2 mouseCursor = Vec2(0, 0);
-		bool leftMouseButtonDown = false;
+    bool running = false;
+    std::vector<Body *> bodies;
+    Vec2 pushForce = Vec2(0, 0);
+    Vec2 mouseCursor = Vec2(0, 0);
+    bool leftMouseButtonDown = false;
 
-		const int NUM_PARTICLES = 4;
-		Vec2 anchor;
-		float k = 2000;
-		float restLength = 300;
+    public:
+        Application() = default;
 
-	public:
-		Application() = default;
+        ~Application() = default;
 
-		~Application() = default;
+        bool IsRunning();
 
-		bool IsRunning();
-
-		void Setup();
-		void Input();
-		void Update();
-		void Render();
-		void Destroy();
+        void Setup();
+        void Input();
+        void Update();
+        void Render();
+        void Destroy();
 };
 
 

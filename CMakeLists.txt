@@ -15,7 +15,6 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMAKE")
-#file(GLOB SOURCE_FILES "src/*.cpp" "src/*.h")
 
 set(SOURCE_FILES src/main.cpp
         src/Application.cpp
@@ -34,6 +33,10 @@ set(SOURCE_FILES src/main.cpp
         src/Physics/Constants.h
         src/Physics/Force.cpp
         src/Physics/Force.h
+        src/Physics/Shape.cpp
+        src/Physics/Shape.h
+        src/Physics/Body.cpp
+        src/Physics/Body.h
 )
 
 
