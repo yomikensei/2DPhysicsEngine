@@ -15,6 +15,7 @@ struct Shape {
     virtual ~Shape() = default;
     virtual ShapeType GetType() const = 0;
     virtual Shape *Clone() const = 0;
+    virtual float GetMomentOfIntertia() const = 0;
 };
 
 struct CircleShape : public Shape {
@@ -24,19 +25,21 @@ struct CircleShape : public Shape {
     virtual ~CircleShape();
     ShapeType GetType() const override;
     Shape *Clone() const override;
+    float GetMomentOfIntertia() const override;
 };
 
 struct PolygonShape : public Shape {
     std::vector<Vec2> vertices;
 
     PolygonShape() = default;
-    PolygonShape(const std::vector<Vec2>& vertices);
+    PolygonShape(const std::vector<Vec2> &vertices);
     virtual ~PolygonShape();
     ShapeType GetType() const override;
     Shape *Clone() const override;
+    float GetMomentOfIntertia() const override;
 };
 
-struct BoxShape : public Shape {
+struct BoxShape : public PolygonShape {
     float width;
     float height;
 
@@ -44,6 +47,7 @@ struct BoxShape : public Shape {
     virtual ~BoxShape();
     ShapeType GetType() const override;
     Shape *Clone() const override;
+    float GetMomentOfIntertia() const override;
 };
 
 
