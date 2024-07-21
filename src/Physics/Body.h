@@ -10,6 +10,8 @@
 #include "Vec2.h"
 
 struct Body {
+    bool isColliding;
+
     Vec2 position;
     Vec2 velocity;
     Vec2 acceleration;
@@ -38,7 +40,11 @@ struct Body {
     void ClearTorque();
 
     void IntegrateLinear(float dt);
-    void IntegrateAngular(float dt);
+    void IntegrateAngular(float timeDelta);
+
+    void Update(float timeDelta);
+
+    bool IsStatic() const;
 };
 
 

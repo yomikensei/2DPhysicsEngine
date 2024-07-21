@@ -36,14 +36,31 @@ ShapeType PolygonShape::GetType() const {
 }
 
 Shape *PolygonShape::Clone() const {
-    return new PolygonShape(vertices);
+    return new PolygonShape(localVertices);
 }
 
 float PolygonShape::GetMomentOfIntertia() const {
     return 0.0;
 }
 
+void PolygonShape::UpdateVertices(float angle, const Vec2 &position) {
+    for (int i = 0; i < localVertices.size(); i++) {
+        worldVertices[i] = localVertices[i].Rotate(angle) += position;
+    }
+}
+
 BoxShape::BoxShape(float width, float height) {
+    this->width = width;
+    this->height = height;
+    this->localVertices.push_back(Vec2(-width / 2, height / 2));
+    this->localVertices.push_back(Vec2(width / 2, height / 2));
+    this->localVertices.push_back(Vec2(width / 2, -height / 2));
+    this->localVertices.push_back(Vec2(-width / 2, -height / 2));
+
+    this->worldVertices.push_back(Vec2(-width / 2, height / 2));
+    this->worldVertices.push_back(Vec2(width / 2, height / 2));
+    this->worldVertices.push_back(Vec2(width / 2, -height / 2));
+    this->worldVertices.push_back(Vec2(-width / 2, -height / 2));
     std::cout << "BoxShape constructor called" << std::endl;
 }
 

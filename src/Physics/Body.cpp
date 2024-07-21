@@ -8,6 +8,7 @@
 
 
 Body::Body(const Shape &shape, const float x, const float y, const float mass) {
+    this->isColliding = false;
     this->shape = shape.Clone();
     this->position = Vec2(x, y);
     this->velocity = Vec2(0, 0);
@@ -56,15 +57,36 @@ void Body::ClearTorque() {
 }
 
 void Body::IntegrateLinear(const float dt) {
+    if (IsStatic()) {
+        return;
+    }
     acceleration = sumForces * invMass;
     velocity += acceleration * dt;
     position += velocity * dt;
     ClearForces();
 }
 
-void Body::IntegrateAngular(float dt) {
-    angluarAcceleration = sumTorque * dt;
-    angularVelocity += angluarAcceleration * dt;
-    rotation += angluarAcceleration * dt;
+void Body::IntegrateAngular(float timeDelta) {
+    if (IsStatic()) {
+        return;
+    }
+    angluarAcceleration = sumTorque * timeDelta;
+    angularVelocity += angluarAcceleration * timeDelta;
+    rotation += angluarAcceleration * timeDelta;
     ClearTorque();
+}
+
+void Body::Update(float timeDelta) {
+    this->IntegrateLinear(timeDelta);
+    this->IntegrateAngular(timeDelta);
+
+    if (this->shape->GetType() == POLYGON || this->shape->GetType() == BOX) {
+        auto *polygonShape = (PolygonShape *) this->shape;
+        polygonShape->UpdateVertices(this->rotation, this->position);
+    }
+}
+
+bool Body::IsStatic() const {
+    const float epsilon = 0.005f;
+    return fabs(invMass) < epsilon;
 }

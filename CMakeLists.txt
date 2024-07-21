@@ -37,6 +37,10 @@ set(SOURCE_FILES src/main.cpp
         src/Physics/Shape.h
         src/Physics/Body.cpp
         src/Physics/Body.h
+        src/Physics/CollisionDetection.cpp
+        src/Physics/CollisionDetection.h
+        src/Physics/Contact.cpp
+        src/Physics/Contact.h
 )
 
 
