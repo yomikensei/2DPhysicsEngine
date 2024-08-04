@@ -5,8 +5,8 @@
 #include "Graphics.h"
 #include <iostream>
 
-SDL_Window* Graphics::window = NULL;
-SDL_Renderer* Graphics::renderer = NULL;
+SDL_Window* Graphics::window = nullptr;
+SDL_Renderer* Graphics::renderer = nullptr;
 int Graphics::windowWidth = 0;
 int Graphics::windowHeight = 0;
 
@@ -27,7 +27,7 @@ bool Graphics::OpenWindow() {
 	SDL_GetCurrentDisplayMode(0, &display_mode);
 	windowWidth = display_mode.w;
 	windowHeight = display_mode.h;
-	window = SDL_CreateWindow(NULL, 0, 0, windowWidth, windowHeight, SDL_WINDOW_BORDERLESS);
+	window = SDL_CreateWindow(nullptr, 0, 0, windowWidth, windowHeight, SDL_WINDOW_BORDERLESS);
 	if (!window) {
 		std::cerr << "Error creating SDL window" << std::endl;
 		return false;

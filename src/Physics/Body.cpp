@@ -19,6 +19,7 @@ Body::Body(const Shape &shape, const float x, const float y, const float mass) {
     this->sumForces = Vec2(0, 0);
     this->sumTorque = 0.0;
     this->mass = mass;
+    this->restitution = 1.0;
     if (mass != 0.0) {
         this->invMass = 1.0 / mass;
     } else {
@@ -54,6 +55,14 @@ void Body::ClearForces() {
 
 void Body::ClearTorque() {
     sumTorque = 0.0;
+}
+
+void Body::ApplyImpulse(const Vec2 &j) {
+    if (this->IsStatic()) {
+        return;
+    }
+
+    velocity += j * invMass;
 }
 
 void Body::IntegrateLinear(const float dt) {

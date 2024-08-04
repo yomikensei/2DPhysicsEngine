@@ -23,6 +23,7 @@ struct Body {
     float invMass;
     float momentI;
     float invMomentI;
+    float restitution;
 
     float rotation;
     float angularVelocity;
@@ -38,6 +39,8 @@ struct Body {
 
     void ClearForces();
     void ClearTorque();
+
+    void ApplyImpulse(const Vec2& j);
 
     void IntegrateLinear(float dt);
     void IntegrateAngular(float timeDelta);

@@ -20,11 +20,9 @@ bool Application::IsRunning() {
 void Application::Setup() {
     running = Graphics::OpenWindow();
 
-    Body *bigBall = new Body(CircleShape(200), 100, 200, 0);
-    Body *smallBall = new Body(CircleShape(80), 500, 200, 1.0);
+    Body *bigBall = new Body(CircleShape(200), 1000, 800, 0);
 
     bodies.push_back(bigBall);
-    bodies.push_back(smallBall);
 }
 
 void Application::Input() {
@@ -38,11 +36,12 @@ void Application::Input() {
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                     running = false;
                 break;
-            case SDL_MOUSEMOTION:
+            case SDL_MOUSEBUTTONDOWN:
                 int x, y;
                 SDL_GetMouseState(&x, &y);
-                bodies[0]->position.x = x;
-                bodies[0]->position.y = y;
+                Body *smallBall = new Body(CircleShape(40), x, y, 1.0);
+                smallBall->restitution = 0.2;
+                bodies.push_back(smallBall);
                 break;
         }
     }
@@ -65,11 +64,11 @@ void Application::Update() {
     timePreviousFrame = SDL_GetTicks();
 
     for (auto body: bodies) {
-        // Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
-        // body->AddForce(weight);
-        //
-        // Vec2 wind = Vec2(10.0 * PIXELS_PER_METER, 0.0);
-        // body->AddForce(wind);
+        Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
+        body->AddForce(weight);
+
+        Vec2 wind = Vec2(10.0 * PIXELS_PER_METER, 0.0);
+        body->AddForce(wind);
 
         float torque = 200;
         body->AddTorque(torque);
