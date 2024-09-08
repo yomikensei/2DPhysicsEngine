@@ -38,6 +38,8 @@ struct PolygonShape : public Shape {
     ShapeType GetType() const override;
     Shape *Clone() const override;
     float GetMomentOfIntertia() const override;
+    Vec2 EdgeAt(int index) const;
+    float FindMinSeparation(const PolygonShape &other, Vec2 &axis, Vec2 &point) const;
 
     void UpdateVertices(float angle, const Vec2& position);
 };

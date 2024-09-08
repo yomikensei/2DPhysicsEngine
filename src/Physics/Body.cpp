@@ -79,9 +79,9 @@ void Body::IntegrateAngular(float timeDelta) {
     if (IsStatic()) {
         return;
     }
-    angluarAcceleration = sumTorque * timeDelta;
+    angluarAcceleration = sumTorque * invMomentI;
     angularVelocity += angluarAcceleration * timeDelta;
-    rotation += angluarAcceleration * timeDelta;
+    rotation += angularVelocity * timeDelta;
     ClearTorque();
 }
 
@@ -89,7 +89,8 @@ void Body::Update(float timeDelta) {
     this->IntegrateLinear(timeDelta);
     this->IntegrateAngular(timeDelta);
 
-    if (this->shape->GetType() == POLYGON || this->shape->GetType() == BOX) {
+    bool isPolygon = this->shape->GetType() == POLYGON || this->shape->GetType() == BOX;
+    if (isPolygon) {
         auto *polygonShape = (PolygonShape *) this->shape;
         polygonShape->UpdateVertices(this->rotation, this->position);
     }

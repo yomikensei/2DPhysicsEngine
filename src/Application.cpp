@@ -20,9 +20,18 @@ bool Application::IsRunning() {
 void Application::Setup() {
     running = Graphics::OpenWindow();
 
-    Body *bigBall = new Body(CircleShape(200), 1000, 800, 0);
+    Body* boxA = new Body(BoxShape(200, 200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
+    Body* boxB = new Body(BoxShape(200, 200), Graphics::Width() / 2.0, Graphics::Height() / 2.0, 1.0);
 
-    bodies.push_back(bigBall);
+    // boxA->angularVelocity = 0.4;
+    // boxB->angularVelocity = 0.1;
+
+
+    boxA->rotation = 0.3;
+    boxB->rotation = 1.3;
+
+    bodies.push_back(boxA);
+    bodies.push_back(boxB);
 }
 
 void Application::Input() {
@@ -36,12 +45,11 @@ void Application::Input() {
                 if (event.key.keysym.sym == SDLK_ESCAPE)
                     running = false;
                 break;
-            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEMOTION:
                 int x, y;
                 SDL_GetMouseState(&x, &y);
-                Body *smallBall = new Body(CircleShape(40), x, y, 1.0);
-                smallBall->restitution = 0.2;
-                bodies.push_back(smallBall);
+                bodies[0]->position.x = x;
+                bodies[0]->position.y = y;
                 break;
         }
     }
@@ -63,40 +71,39 @@ void Application::Update() {
 
     timePreviousFrame = SDL_GetTicks();
 
-    for (auto body: bodies) {
-        Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
-        body->AddForce(weight);
-
-        Vec2 wind = Vec2(10.0 * PIXELS_PER_METER, 0.0);
-        body->AddForce(wind);
-
-        float torque = 200;
-        body->AddTorque(torque);
-    }
+    // for (auto body: bodies) {
+    //     Vec2 weight = Vec2(0.0, body->mass * 9.8 * PIXELS_PER_METER);
+    //     body->AddForce(weight);
+    //
+    //     Vec2 wind = Vec2(10.0 * PIXELS_PER_METER, 0.0);
+    //     body->AddForce(wind);
+    //
+    //     float torque = 200;
+    //     body->AddTorque(torque);
+    // }
 
     // Integrate the acceleration and velocity to estimate the new position
     for (auto body: bodies) {
         body->Update(timeDelta);
-        body->isColliding = false;
     }
 
-    // Check all the rigidbodies with the other rigid bodies for collision
+    // Check all the rigid bodies with the other rigid bodies for collision
     for (int i = 0; i <= bodies.size() - 1; i++) {
         for (int j = i + 1; j < bodies.size(); j++) {
-            // TODO: check bodies[i] with bodies[j]
-            Body *a = bodies[i];
-            Body *b = bodies[j];
+            Body* a = bodies[i];
+            Body* b = bodies[j];
+            a->isColliding = false;
+            b->isColliding = false;
+
             Contact contact;
+
             if (CollisionDetection::IsColliding(a, b, contact)) {
                 Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFFFF00FF);
                 Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFFFF00FF);
-                Graphics::DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * contact.depth,
-                                   contact.start.y + contact.normal.y * contact.depth, 0xFFFF00FF);
-
+                Graphics::DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 15,
+                                   contact.start.y + contact.normal.y * 15, 0xFFFF00FF);
                 a->isColliding = true;
                 b->isColliding = true;
-
-                contact.ResolvePenetration();
             }
         }
     }
@@ -126,30 +133,20 @@ void Application::Update() {
 }
 
 void Application::Render() {
+    // Draw all bodies
     for (auto body: bodies) {
-        Uint32 outlineColor;
-        if (body->isColliding)
-            outlineColor = 0xFF0000FF;
-        else
-            outlineColor = 0xFFFFFFFF;
+        Uint32 color = body->isColliding ? 0xFF0000FF : 0xFFFFFFFF;
 
-        switch (body->shape->GetType()) {
-            case CIRCLE: {
-                auto circleShape = dynamic_cast<CircleShape *>(body->shape);
-                Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation,
-                                     outlineColor);
-                break;
-            }
-            case BOX: {
-                auto boxShape = dynamic_cast<BoxShape *>(body->shape);
-                Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, outlineColor);
-                break;
-            }
-            default: {
-                std::cout << "NO SHAPE DRAWER DEFINED FOR SHAPE YET" << std::endl;
-            }
+        if (body->shape->GetType() == CIRCLE) {
+            CircleShape *circleShape = (CircleShape *) body->shape;
+            Graphics::DrawFillCircle(body->position.x, body->position.y, circleShape->radius, color);
+        }
+        if (body->shape->GetType() == BOX) {
+            BoxShape *boxShape = (BoxShape *) body->shape;
+            Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, color);
         }
     }
+
     Graphics::RenderFrame();
 }
 
@@ -159,3 +156,4 @@ void Application::Destroy() {
     }
     Graphics::CloseWindow();
 }
+
