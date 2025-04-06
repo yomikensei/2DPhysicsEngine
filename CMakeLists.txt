@@ -39,8 +39,15 @@ set(SOURCE_FILES src/main.cpp
         src/Physics/Body.h
         src/Physics/CollisionDetection.cpp
         src/Physics/CollisionDetection.h
-        src/Physics/Contact.cpp
         src/Physics/Contact.h
+        src/Physics/MatMN.cpp
+        src/Physics/MatMN.h
+        src/Physics/VecN.cpp
+        src/Physics/VecN.h
+        src/Physics/World.cpp
+        src/Physics/World.h
+        src/Physics/Constraint.cpp
+        src/Physics/Constraint.h
 )
 
 
@@ -58,3 +65,7 @@ target_link_libraries(${PROJECT_NAME}
         PRIVATE SDL2_image::SDL2_image
 )
 
+add_custom_command(TARGET 2DPhysicsEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets
+        $<TARGET_FILE_DIR:2DPhysicsEngine>/assets)

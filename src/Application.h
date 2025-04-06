@@ -5,29 +5,26 @@
 #ifndef INC_2DPHYSICSENGINE_APPLICATION_H
 #define INC_2DPHYSICSENGINE_APPLICATION_H
 
-#include "./Graphics.h"
 #include "Physics/Body.h"
-#include "Physics/Particle.h"
+#include "Physics/World.h"
 
 class Application {
-    bool running = false;
-    std::vector<Body *> bodies;
-    Vec2 pushForce = Vec2(0, 0);
-    Vec2 mouseCursor = Vec2(0, 0);
-    bool leftMouseButtonDown = false;
+	bool debug = false;
+	bool running = false;
+	World *world;
+	SDL_Texture *backgroundTexture;
 
-    public:
-        Application() = default;
+public:
+	Application() = default;
+	~Application() = default;
 
-        ~Application() = default;
+	bool IsRunning();
 
-        bool IsRunning();
-
-        void Setup();
-        void Input();
-        void Update();
-        void Render();
-        void Destroy();
+	void Setup();
+	void Input();
+	void Update();
+	void Render();
+	void Destroy();
 };
 
 

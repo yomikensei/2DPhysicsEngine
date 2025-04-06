@@ -6,48 +6,57 @@
 #define INC_2DPHYSICSENGINE_BODY_H
 
 
+#include <SDL_render.h>
 #include "Shape.h"
 #include "Vec2.h"
 
 struct Body {
-    bool isColliding;
+	Vec2 position;
+	Vec2 velocity;
+	Vec2 acceleration;
 
-    Vec2 position;
-    Vec2 velocity;
-    Vec2 acceleration;
+	Vec2 sumForces;
+	float sumTorque;
 
-    Vec2 sumForces;
-    float sumTorque;
+	float mass;
+	float invMass;
+	float momentI;
+	float inverseMomentI;
 
-    float mass;
-    float invMass;
-    float momentI;
-    float invMomentI;
-    float restitution;
+	float rotation;
+	float angularVelocity;
+	float angularAcceleration;
 
-    float rotation;
-    float angularVelocity;
-    float angluarAcceleration;
+	float friction;
+	float restitution;
 
-    Shape *shape = nullptr;
+	Shape *shape = nullptr;
+	SDL_Texture *texture = nullptr;
 
-    Body(const Shape &shape, float x, float y, float mass);
-    ~Body();
+	Body(const Shape &shape, float x, float y, float mass);
+	~Body();
 
-    void AddForce(const Vec2 &force);
-    void AddTorque(float torque);
+	void AddForce(const Vec2 &force);
+	void AddTorque(float torque);
 
-    void ClearForces();
-    void ClearTorque();
+	void ClearForces();
+	void ClearTorque();
 
-    void ApplyImpulse(const Vec2& j);
+	void ApplyImpulseLinear(const Vec2 &j);
+	void ApplyImpulseAngular(const float j);
+	void ApplyImpulseAtPoint(const Vec2 &j, const Vec2 &r);
 
-    void IntegrateLinear(float dt);
-    void IntegrateAngular(float timeDelta);
+	void IntegrateForces(const float timeDelta);
+	void IntegrateVelocities(const float timeDelta);
 
-    void Update(float timeDelta);
+	void Update(float timeDelta);
 
-    bool IsStatic() const;
+	bool IsStatic() const;
+
+	void SetTexture(const char *textureFileName);
+
+	Vec2 LocalSpaceToWorldSpace(const Vec2 &point) const;
+	Vec2 WorldSpaceToLocalSpace(const Vec2 &point) const;
 };
 
 

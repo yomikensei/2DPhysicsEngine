@@ -6,15 +6,14 @@
 #define INC_2DPHYSICSENGINE_FORCE_H
 
 #include "./Vec2.h"
-#include "./Particle.h"
+#include "./Body.h"
 
 
 struct Force {
-	static Vec2 GenerateDragForce(const Particle &particle, float k);
-	static Vec2 GenerateFrictionForce(const Particle &particle, float k);
-	static Vec2 GenerateGravitationalForce(const Particle& a, const Particle& b, float G);
-	static Vec2 GenerateSpringForce(const Particle& particle, Vec2 anchor, float restLength, float k);
-	static Vec2 GenerateSpringForce(const Particle& particleA, const Particle& particleB, float restLength, float k);
+	static Vec2 GenerateDragForce(const Body& body, float k);
+	static Vec2 GenerateFrictionForce(const Body& body, float k);
+	static Vec2 GenerateSpringForce(const Body& body, Vec2 anchor, float restLength, float k);
+	static Vec2 GenerateGravitationalForce(const Body& a, const Body& b, float G, float minDistance, float maxDistance);
 
 };
 
